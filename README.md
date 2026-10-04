@@ -101,11 +101,11 @@ expressão**.
 $ dotnet medidor.dll gradiente
 
    variaveis   nos da funcao        avante       reverso     razao
-           1               4             4             8       0.5
-           2               9            18            18       1.0
-          10              49           490            98       5.0
-         100             499        49,900           998      50.0
-        1000           4,999     4,999,000         9,998     500.0
+           1               2             2             4       0.5
+           2               5            10            10       1.0
+          10              29           290            58       5.0
+         100             299        29,900           598      50.0
+        1000           2,999     2,999,000         5,998     500.0
 ```
 
 O modo direto responde "como a saída muda quando **esta** entrada muda", e precisa
