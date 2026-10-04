@@ -1,0 +1,52 @@
+name: testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  testes:
+    runs-on: ${{ matrix.so }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        so: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # O juiz e a derivada SIMBOLICA, e ela e um juiz de um tipo raro: ela nao
+      # devolve um numero aproximado, devolve OUTRA EXPRESSAO, que pode ser
+      # avaliada em qualquer ponto com a mesma precisao da original. Quando a
+      # derivada automatica e a simbolica discordam num ponto, nao ha margem
+      # para "ficou perto".
+      #
+      # As quatro maneiras de derivar falam da MESMA funcao, porque todas leem a
+      # mesma arvore de expressao. Sem isso, comparar derivada simbolica com
+      # numero dual seria comparar duas funcoes escritas duas vezes, e a
+      # primeira divergencia seria um erro de transcricao, nao um achado.
+      - name: testes
+        run: dotnet test testes/Derivada.Testes/Derivada.Testes.csproj -c Release --nologo -v q
+
+      # As medidas rodam para REGISTRAR numeros: erro contra a simbolica e
+      # contagem de nos, nunca relogio.
+      - name: o V do erro em funcao do passo
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- passo
+
+      - name: os quatro metodos contra a derivada simbolica
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- tabela
+
+      - name: o inchaco simbolico, arvore contra grafo
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- inchaco
+
+      - name: gradiente, uma passada por variavel contra uma passada so
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- gradiente
+
+      - name: quando a propria funcao ja perdeu os digitos
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- cancelamento
